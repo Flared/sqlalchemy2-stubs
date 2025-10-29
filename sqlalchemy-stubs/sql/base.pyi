@@ -1,4 +1,15 @@
+from .. import util
+from ..engine import Connection
+from ..engine import Engine
+from ..util import HasMemoized as HasMemoized
+from ..util import langhelpers
+from . import roles
+from .elements import ColumnElement
+from .traversals import HasCacheKey
+from .traversals import HasCopyInternals
+from .visitors import ClauseVisitor
 from types import ModuleType
+
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -9,22 +20,11 @@ from typing import List
 from typing import Mapping
 from typing import NoReturn
 from typing import Optional
-from typing import overload
 from typing import Tuple
 from typing import Type
 from typing import TypeVar
 from typing import Union
-
-from . import roles
-from .elements import ColumnElement
-from .traversals import HasCacheKey
-from .traversals import HasCopyInternals
-from .visitors import ClauseVisitor
-from .. import util
-from ..engine import Connection
-from ..engine import Engine
-from ..util import HasMemoized as HasMemoized
-from ..util import langhelpers
+from typing import overload
 
 _T = TypeVar("_T")
 _SC = TypeVar("_SC", bound=SingletonConstant)
@@ -155,7 +155,8 @@ class ColumnCollection(Generic[_CE]):
     def __bool__(self) -> bool: ...
     def __len__(self) -> int: ...
     def __iter__(self) -> Iterator[_CE]: ...
-    def __getitem__(self, key: str) -> _CE: ...
+    # FLARE OVERRIDE
+    # def __getitem__(self, key: str) -> _CE: ...
     def __getattr__(self, key: str) -> _CE: ...
     def __contains__(self, key: str) -> bool: ...
     def compare(self, other: Any) -> bool: ...

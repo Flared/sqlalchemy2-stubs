@@ -1,23 +1,26 @@
+from ... import Column
+from ... import Constraint
+from ... import Index
+from ... import util as util
+from ...orm import Mapped
+from ...sql import ColumnCollection
+from ...sql.dml import Insert as StandardInsert
+from ...sql.elements import ClauseElement
+from ...sql.elements import ColumnElement
+from ...sql.functions import GenericFunction
+from . import ExcludeConstraint
+
 from typing import Any
 from typing import Mapping
 from typing import Optional
 from typing import Sequence
 from typing import Union
 
-from . import ExcludeConstraint
-from ... import Column
-from ... import Constraint
-from ... import Index
-from ... import util as util
-from ...sql.dml import Insert as StandardInsert
-from ...sql.elements import ClauseElement
-from ...sql.elements import ColumnElement
-from ...sql.functions import GenericFunction
-
 class Insert(StandardInsert):
     stringify_dialect: str = ...
+    # FLARE OVERRIDE
     @util.memoized_property
-    def excluded(self): ...
+    def excluded(self) -> ColumnCollection: ...
     def on_conflict_do_update(
         self,
         constraint: Optional[
@@ -25,7 +28,12 @@ class Insert(StandardInsert):
         ] = ...,
         index_elements: Sequence[Union[str, Column]] = ...,
         index_where: Optional[ClauseElement] = ...,
-        set_: Mapping[str, Union[ColumnElement, GenericFunction]] = ...,
+        # FLARE OVERRIDE
+        set_: (
+            Mapping[object, Any]
+            | Mapping[Mapped, Union[ColumnElement, GenericFunction]]
+            | Mapping[ColumnElement, Union[ColumnElement, GenericFunction]]
+        ) = ...,
         where: Optional[ClauseElement] = ...,
     ) -> "Insert": ...
     def on_conflict_do_nothing(
@@ -67,6 +75,11 @@ class OnConflictDoUpdate(OnConflictClause):
         ] = ...,
         index_elements: Optional[Sequence[Union[str, Column]]] = ...,
         index_where: Optional[Any] = ...,
-        set_: Mapping[str, Union[ColumnElement, GenericFunction]] = ...,
+        # FLARE OVERRIDE
+        set_: (
+            Mapping[object, Any]
+            | Mapping[Mapped, Union[ColumnElement, GenericFunction]]
+            | Mapping[ColumnElement, Union[ColumnElement, GenericFunction]]
+        ) = ...,
         where: Optional[ClauseElement] = ...,
     ) -> None: ...

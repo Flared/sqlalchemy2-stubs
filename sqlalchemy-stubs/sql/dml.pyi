@@ -1,8 +1,5 @@
-from typing import Any
-from typing import Optional
-from typing import TypeVar
-from typing import Union
-
+from ..orm import Mapped
+from . import ColumnElement
 from . import roles
 from .base import CompileState
 from .base import DialectKWArgs
@@ -14,6 +11,13 @@ from .elements import ClauseElement
 from .schema import Table
 from .selectable import HasCTE
 from .selectable import HasPrefixes
+
+from typing import Any
+from typing import Mapping
+from typing import Optional
+from typing import Sequence
+from typing import TypeVar
+from typing import Union
 
 _UB = TypeVar("_UB", bound=UpdateBase)
 _VB = TypeVar("_VB", bound=ValuesBase)
@@ -77,7 +81,16 @@ class ValuesBase(UpdateBase):
     select: Any = ...
     table: Any = ...
     def __init__(self, table: Any, values: Any, prefixes: Any) -> None: ...
-    def values(self: _VB, *args: Any, **kwargs: Any) -> _VB: ...
+    # FLARE OVERRIDE
+    def values(
+        self: _VB,
+        *args: Mapping[object, Any]
+        | Sequence[Mapping[object, Any]]
+        | Mapping[Mapped[Any], Any]
+        | Sequence[Mapping[Mapped[Any], Any]]
+        | Mapping[ColumnElement, Any]
+        | Sequence[Mapping[ColumnElement, Any]],
+    ) -> _VB: ...
     def return_defaults(self: _VB, *cols: Any) -> _VB: ...
 
 class Insert(ValuesBase):
@@ -88,7 +101,15 @@ class Insert(ValuesBase):
     def __init__(
         self,
         table: Any,
-        values: Optional[Any] = ...,
+        # FLARE OVERRIDE
+        values: (
+            Mapping[object, Any]
+            | Sequence[Mapping[object, Any]]
+            | Mapping[Mapped[Any], Any]
+            | Sequence[Mapping[Mapped[Any], Any]]
+            | Mapping[ColumnElement, Any]
+            | Sequence[Mapping[ColumnElement, Any]]
+        ) = ...,
         inline: bool = ...,
         bind: Optional[Any] = ...,
         prefixes: Optional[Any] = ...,
@@ -111,13 +132,20 @@ class DMLWhereBase:
     ) -> Optional[Union[BooleanClauseList[Any], ClauseElement]]: ...
 
 class Update(DMLWhereBase, ValuesBase):
-    __visit_name__: str = ...
     is_update: bool = ...
     def __init__(
         self,
         table: Any,
         whereclause: Optional[Any] = ...,
-        values: Optional[Any] = ...,
+        # FLARE OVERRIDE
+        values: (
+            Mapping[object, Any]
+            | Sequence[Mapping[object, Any]]
+            | Mapping[Mapped[Any], Any]
+            | Sequence[Mapping[Mapped[Any], Any]]
+            | Mapping[ColumnElement, Any]
+            | Sequence[Mapping[ColumnElement, Any]]
+        ) = ...,
         inline: bool = ...,
         bind: Optional[Any] = ...,
         prefixes: Optional[Any] = ...,
